@@ -4,10 +4,12 @@ description: |
   'Checks for Squid proxy events in Syslog associated with common mining pools .This query presumes the default Squid log format is being used.
    http://www.squid-cache.org/Doc/config/access_log/'
 severity: Low
-status: Available
 requiredDataConnectors:
   - connectorId: Syslog
     dataTypes:
+      - Syslog
+  - connectorId: SyslogAma
+    dataTypes: 
       - Syslog
 tactics:
   - CommandAndControl
@@ -51,5 +53,5 @@ entityMappings:
     fieldMappings:
       - identifier: Url
         columnName: URL
-version: 1.0.0
+version: 1.0.1
 kind: NRT

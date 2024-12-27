@@ -15,7 +15,7 @@ References:
 Description: |
   This ASIM parser supports normalizing Sysmon for Linux process terminate events (event 5) collected using the Syslog connector to the ASIM Process Event normalized schema. 
 ParserName: ASimProcessTerminateLinuxSysmon
-EquivalentBuiltInParser: _ASim_ProcessTerminate_LinuxSysmon
+EquivalentBuiltInParser: _ASim_ProcessEvent_TerminateLinuxSysmon
 ParserParams:
   - Name: disabled
     Type: bool
@@ -39,6 +39,7 @@ ParserQuery: |
                                     EventCount = int(1),
                                     EventVendor = "Microsoft",
                                     EventSchemaVersion = "0.1.0",
+                                    EventSchema = 'ProcessEvent',
                                     EventOriginalType='5',
                                     EventProduct = "Sysmon",
                                     EventResult = 'Success',

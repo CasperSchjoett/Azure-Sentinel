@@ -114,10 +114,10 @@ for f in folders:
     else:
         logging.warning (f'File or folder "{f}" does not exist.')
 
-files = list(dict.fromkeys(files))  # -- remove duplicates
+files = sorted(list(dict.fromkeys(files))) # -- remove duplicates
 
 if len(files) == 0:
-    raise SystemExit ('No files to prcess.')
+    raise SystemExit ('No files to process.')
 
 # -- Read and prepare templates
 func_arm_template = json.load(open(os.path.join(templates_dir, 'func_arm_template.json'), 'r'))
@@ -200,15 +200,15 @@ for f in files:
         logging.debug ('Generating ARM template')
         # generate the ARM template
         armTemplate = copy.deepcopy(func_arm_template)
-        armTemplate['resources'][0]['resources'][0]['name'] = Alias
-        armTemplate['resources'][0]['resources'][0]['properties']['query'] = Query
-        armTemplate['resources'][0]['resources'][0]['properties']['category'] = Category
+        armTemplate['resources'][0]['name'] = f"[concat(parameters('Workspace'), '/{Alias}')]"
+        armTemplate['resources'][0]['properties']['query'] = Query
+        armTemplate['resources'][0]['properties']['category'] = Category
         if params:
             Parameters = ""
             for param in params:
                 logging.debug("Param: " + str(param))
-                if param['Type'] == 'table':
-                    ParamString = param["Name"]
+                if param['Type'].startswith('table:'):
+                    ParamString = f'{param["Name"]}:{param["Type"].split(":",1)[1]}'
                 else:
                     try:
                         Default = param["Default"] 
@@ -220,9 +220,9 @@ for f in files:
                 if Parameters != "":
                     Parameters = f'{Parameters},'
                 Parameters = Parameters + ParamString
-            armTemplate['resources'][0]['resources'][0]['properties']['functionParameters'] =  Parameters
-        armTemplate['resources'][0]['resources'][0]['properties']['FunctionAlias'] = Alias
-        armTemplate['resources'][0]['resources'][0]['properties']['displayName'] = Title
+            armTemplate['resources'][0]['properties']['functionParameters'] =  Parameters
+        armTemplate['resources'][0]['properties']['FunctionAlias'] = Alias
+        armTemplate['resources'][0]['properties']['displayName'] = Title
 
         logging.debug ('Writing ARM template')
         # Write template
